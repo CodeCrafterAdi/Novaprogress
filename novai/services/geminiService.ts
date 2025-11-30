@@ -18,7 +18,19 @@ const getEnv = (key: string, fallback: string): string => {
 };
 
 // The API key is read from VITE_GEMINI_API_KEY for Vite/Netlify builds, or API_KEY for other environments.
-const API_KEY = getEnv('VITE_GEMINI_API_KEY', process.env.API_KEY || '');
+// 1️⃣ First try environment variables
+let API_KEY = getEnv('VITE_GEMINI_API_KEY', '');
+
+// 2️⃣ If missing, try localStorage (user-provided key)
+if (!API_KEY && typeof window !== "undefined") {
+  const stored = localStorage.getItem("nova_gemini_key");
+  if (stored) API_KEY = stored;
+}
+
+// 3️⃣ Fallback message if still empty
+if (!API_KEY) {
+  console.warn("⚠ No Gemini API Key found. AI features will use mock mode.");
+}
 
 let ai: GoogleGenAI | null = null;
 
