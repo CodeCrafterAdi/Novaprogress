@@ -1,0 +1,7 @@
+{
+  "name": "NovaProgress",
+  "description": "The ultimate gamified life-evolution OS. Level up your fitness, skills, business, and family life with anime-inspired progression.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
