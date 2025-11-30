@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
@@ -208,7 +208,7 @@ const App: React.FC = () => {
         setAuthProviderError,
         openAuth,
     }}>
-      <HashRouter>
+      <Router>
         <AuthModal 
             isOpen={showAuth} 
             onSuccess={() => setShowAuth(false)} 
@@ -260,7 +260,7 @@ const App: React.FC = () => {
 
         {/* Only show routes if logged in (or offline) and not onboarding */}
         {(session || isOfflineMode) && !showOnboarding && <AppRoutes />}
-      </HashRouter>
+      </Router>
     </AppContext.Provider>
   );
 };
