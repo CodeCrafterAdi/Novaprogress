@@ -1,27 +1,34 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Read env with fallback
+const getEnv = (key: string, fallback: string): string => {
+  try {
+    if (typeof import.meta !== 'undefined' && import.meta.env?.[key]) {
+      return import.meta.env[key];
+    }
+    if (typeof process !== 'undefined' && process.env?.[key]) {
+      return process.env[key] as string;
+    }
+  } catch (_) {}
 
-// Detect if Supabase is configured
-export const isSupabaseConfigured = () => {
-  return (
-    typeof supabaseUrl === "string" &&
-    supabaseUrl.length > 10 &&
-    typeof supabaseAnonKey === "string" &&
-    supabaseAnonKey.length > 10
-  );
+  return fallback;
 };
 
-// Create client only when env keys exist
-export const supabase = isSupabaseConfigured()
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true,
-      },
-    })
-  : null;
+// Supabase URL + Anon Key
+export const SUPABASE_URL = getEnv('VITE_SUPABASE_URL', '');
+const SUPABASE_ANON_KEY = getEnv('VITE_SUPABASE_ANON_KEY', '');
 
-export default supabase;
+export const supabase =
+  SUPABASE_URL && SUPABASE_ANON_KEY
+    ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          flowType: 'pkce',
+        },
+        db: { schema: 'public' },
+      })
+    : null;
+
+export const isSupabaseConfigured = () => !!supabase;
